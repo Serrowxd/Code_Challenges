@@ -6,7 +6,8 @@ const rl = readline.createInterface({
 });
 
 let alpha = [];
-let nonalpha = [];
+let storeAlpha = [];
+let nonAlpha = [];
 let word = "taco";
 let man = 0;
 
@@ -15,12 +16,12 @@ const HangMan = () => {
   rl.prompt();
   // Regex for all the letters of the alphabet
   let letters = /^[A-Za-z]+$/;
-
-  let wlength = word.length;
-  let alength = 0;
+  // Counter for the number of matching letters
+  let counter = 0;
 
   // Handle stream
   rl.on("line", (letter) => {
+    // Loss Condition
     if (man === 5) {
       console.log("!!----!!");
       console.log(`Man: ${man}`);
@@ -29,20 +30,24 @@ const HangMan = () => {
       rl.close();
     }
 
-    // Check word against alpha array for letters?
-    // Win condition is broken
-    // for (let i = 0; i < alpha.length; i++) {
-    //   if (alength === wlength) {
-    //     console.log("!!----!!");
-    //     console.log(`Man: ${man}`);
-    //     console.log(`The word was ${word}`);
-    //     console.log("You win! :)");
-    //     rl.close();
-    //     // Win game
-    //   } else if (word.includes(alpha[i])) {
-    //     alength += 1;
-    //   }
-    // }
+    // Win Condition
+    // Win condition is still broken
+    // We need to check the alphabet storage array when santizing input
+    alpha.forEach((item) => {
+      if (word.includes(item)) {
+        alpha.pop();
+        storeAlpha.push(item);
+        counter = counter + 1;
+      }
+
+      if (counter === word.length) {
+        console.log("!!----!!");
+        console.log(`Man: ${man}`);
+        console.log(`The word was ${word}`);
+        console.log("You win! :)");
+        rl.close();
+      }
+    });
 
     // Check for excess length of input, or a non-letter character
     if (letter.length !== 1 || !letter.match(letters)) {
@@ -68,14 +73,16 @@ const HangMan = () => {
         alpha.push(lowLetter);
         console.log("The letter was correct");
         console.log("----");
-        console.log(`Letters Used: ${alpha}`);
+        console.log(`Word: ${storeAlpha}`);
+        console.log(`Letters Used: ${nonAlpha}`);
         console.log(`Man: ${man} (5 is a loss)`);
         rl.prompt();
       } else {
         man = man + 1;
-        alpha.push(lowLetter);
+        nonAlpha.push(lowLetter);
         console.log("The letter was incorrect");
-        console.log(`Letters Used: ${alpha}`);
+        console.log(`Word: ${storeAlpha}`);
+        console.log(`Letters Used: ${nonAlpha}`);
         console.log(`Man: ${man} (5 is a loss)`);
         console.log("----");
         rl.prompt();
