@@ -1,38 +1,90 @@
 const readline = require("readline");
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-// rl.question("What is your name ? ", function (name) {
-//   rl.question("Where do you live ? ", function (country) {
-//     console.log(`${name}, is a citizen of ${country}`);
-//     rl.close();
-//   });
-// });
-
-// rl.on("close", function () {
-//   console.log("\nBYE BYE !!!");
-//   process.exit(0);
-// });
-
 let alpha = [];
-let word = "";
+let nonalpha = [];
+let word = "taco";
+let man = 0;
 
 const HangMan = () => {
+  rl.setPrompt("Input Letter: ");
+  rl.prompt();
+  // Regex for all the letters of the alphabet
+  let letters = /^[A-Za-z]+$/;
+
+  let wlength = word.length;
+  let alength = 0;
+
   // Handle stream
-  rl.question("Input: ", (letter) => {
-    if (letter.length !== 1) {
-      console.log("Input a letter");
+  rl.on("line", (letter) => {
+    if (man === 5) {
+      console.log("!!----!!");
+      console.log(`Man: ${man}`);
+      console.log(`The word was ${word}`);
+      console.log("You lost.. :(");
+      rl.close();
     }
-    alpha.push(letter);
-    rl.close();
+
+    // Check word against alpha array for letters?
+    // Win condition is broken
+    // for (let i = 0; i < alpha.length; i++) {
+    //   if (alength === wlength) {
+    //     console.log("!!----!!");
+    //     console.log(`Man: ${man}`);
+    //     console.log(`The word was ${word}`);
+    //     console.log("You win! :)");
+    //     rl.close();
+    //     // Win game
+    //   } else if (word.includes(alpha[i])) {
+    //     alength += 1;
+    //   }
+    // }
+
+    // Check for excess length of input, or a non-letter character
+    if (letter.length !== 1 || !letter.match(letters)) {
+      console.log("Input a letter");
+      // If input is incorrect, reprompt user for input
+      console.log("----");
+      rl.prompt();
+    } else {
+      let lowLetter = letter.toLowerCase();
+
+      // Loop through array and check used variables
+      for (let i = 0; i < alpha.length; i++) {
+        if (lowLetter === alpha[i]) {
+          console.log("This letter has already been used");
+          console.log("----");
+          rl.prompt();
+          return;
+        }
+      }
+
+      // If everything passes, send it to the final check
+      if (word.includes(letter)) {
+        alpha.push(lowLetter);
+        console.log("The letter was correct");
+        console.log("----");
+        console.log(`Letters Used: ${alpha}`);
+        console.log(`Man: ${man} (5 is a loss)`);
+        rl.prompt();
+      } else {
+        man = man + 1;
+        alpha.push(lowLetter);
+        console.log("The letter was incorrect");
+        console.log(`Letters Used: ${alpha}`);
+        console.log(`Man: ${man} (5 is a loss)`);
+        console.log("----");
+        rl.prompt();
+      }
+    }
+  }).on("close", () => {
+    process.exit(0);
   });
 };
-
-rl.on("close", () => {
-  console.log(alpha);
-});
 
 HangMan();
 
@@ -74,3 +126,17 @@ HangMan();
 // Hangman: 2 (5 is a loss)
 // a, c, e, o, h, l
 // You Win! :)
+
+// !! Scrap Code
+
+// rl.question("What is your name ? ", function (name) {
+//   rl.question("Where do you live ? ", function (country) {
+//     console.log(`${name}, is a citizen of ${country}`);
+//     rl.close();
+//   });
+// });
+
+// rl.on("close", function () {
+//   console.log("\nBYE BYE !!!");
+//   process.exit(0);
+// });
