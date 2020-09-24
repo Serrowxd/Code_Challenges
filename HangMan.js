@@ -11,6 +11,10 @@ let nonAlpha = [];
 let word = "taco";
 let man = 0;
 
+// Words that contain the same letter more than once will cause it to break
+// Need to find a way to display the word itself based on the inputs.
+// Uppercase letters in the word cause it to break as well, need an edge case for checking input against a lowercase word.
+
 const HangMan = () => {
   rl.setPrompt("Input Letter: ");
   rl.prompt();
