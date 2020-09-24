@@ -21,6 +21,46 @@ const HangMan = () => {
 
   // Handle stream
   rl.on("line", (letter) => {
+    // Check for excess length of input, or a non-letter character
+    if (letter.length !== 1 || !letter.match(letters)) {
+      console.log("Input a letter");
+      // If input is incorrect, reprompt user for input
+      console.log("----");
+      rl.prompt();
+    } else {
+      let lowLetter = letter.toLowerCase();
+
+      // Loop through array and check used variables
+      for (let i = 0; i < alpha.length + storeAlpha.length; i++) {
+        if (lowLetter === alpha[i] || lowLetter === storeAlpha[i]) {
+          console.log("This letter has already been used");
+          console.log("----");
+          rl.prompt();
+          return;
+        }
+      }
+
+      // If everything passes, send it to the final check
+      if (word.includes(letter)) {
+        alpha.push(lowLetter);
+        console.log("The letter was correct");
+        console.log(`Word: ${storeAlpha}`);
+        console.log(`Letters Used: ${nonAlpha}`);
+        console.log(`Man: ${man} (5 is a loss)`);
+        console.log("----");
+        rl.prompt();
+      } else {
+        man = man + 1;
+        nonAlpha.push(lowLetter);
+        console.log("The letter was incorrect");
+        console.log(`Word: ${storeAlpha}`);
+        console.log(`Letters Used: ${nonAlpha}`);
+        console.log(`Man: ${man} (5 is a loss)`);
+        console.log("----");
+        rl.prompt();
+      }
+    }
+
     // Loss Condition
     if (man === 5) {
       console.log("!!----!!");
@@ -48,46 +88,6 @@ const HangMan = () => {
         rl.close();
       }
     });
-
-    // Check for excess length of input, or a non-letter character
-    if (letter.length !== 1 || !letter.match(letters)) {
-      console.log("Input a letter");
-      // If input is incorrect, reprompt user for input
-      console.log("----");
-      rl.prompt();
-    } else {
-      let lowLetter = letter.toLowerCase();
-
-      // Loop through array and check used variables
-      for (let i = 0; i < alpha.length; i++) {
-        if (lowLetter === alpha[i]) {
-          console.log("This letter has already been used");
-          console.log("----");
-          rl.prompt();
-          return;
-        }
-      }
-
-      // If everything passes, send it to the final check
-      if (word.includes(letter)) {
-        alpha.push(lowLetter);
-        console.log("The letter was correct");
-        console.log("----");
-        console.log(`Word: ${storeAlpha}`);
-        console.log(`Letters Used: ${nonAlpha}`);
-        console.log(`Man: ${man} (5 is a loss)`);
-        rl.prompt();
-      } else {
-        man = man + 1;
-        nonAlpha.push(lowLetter);
-        console.log("The letter was incorrect");
-        console.log(`Word: ${storeAlpha}`);
-        console.log(`Letters Used: ${nonAlpha}`);
-        console.log(`Man: ${man} (5 is a loss)`);
-        console.log("----");
-        rl.prompt();
-      }
-    }
   }).on("close", () => {
     process.exit(0);
   });
